@@ -1,0 +1,142 @@
+$user = User::find(1); // Assuming you have a User model
+
+// Retrieve user's services
+$services = $user->services;
+
+// Retrieve user's orders
+$orders = $user->orders;
+
+// Retrieve user's reviews
+$reviews = $user->reviews;
+
+// Retrieve user's conversations
+$conversations = $user->orders()->with('conversation')->get()->pluck('conversation')->flatten();
+
+// Retrieve user's notifications
+$notifications = $user->notifications;
+
+// Accessing specific data
+foreach ($services as $service) {
+    // Access service properties
+    $serviceTitle = $service->service_title;
+    $serviceDescription = $service->service_description;
+    // ...
+}
+
+foreach ($orders as $order) {
+    // Access order properties
+    $orderId = $order->id;
+    $orderStatus = $order->order_status;
+    // ...
+
+    // Access related service
+    $serviceTitle = $order->service->service_title;
+    $servicePrice = $order->service->service_price;
+    // ...
+
+    // Access related conversation
+    $conversationMessage = $order->conversation->message;
+    $conversationTimestamp = $order->conversation->timestamp;
+    // ...
+}
+
+foreach ($reviews as $review) {
+    // Access review properties
+    $rating = $review->rating;
+    $comment = $review->comment;
+    // ...
+
+    // Access related service
+    $serviceTitle = $review->service->service_title;
+    // ...
+}
+
+foreach ($conversations as $conversation) {
+    // Access conversation properties
+    $orderId = $conversation->order_id;
+    $userId = $conversation->user_id;
+    $message = $conversation->message;
+    // ...
+}
+
+foreach ($notifications as $notification) {
+    // Access notification properties
+    $notificationText = $notification->notification_text;
+    $notificationDate = $notification->notification_date;
+    // ...
+}
+
+
+///
+$review = Review::find(1); // Assuming you have a Review model and want to retrieve review with ID 1
+
+// Retrieve the associated user
+$user = $review->user;
+
+// Access user properties
+$userName = $user->name;
+$userEmail = $user->email;
+// ...
+
+
+//category to sub to sub-sub by category id
+$category = Category::find($categoryId);
+
+if ($category) {
+    // Retrieve subcategories for the category
+    $subCategories = $category->subCategories;
+
+    // Retrieve sub-subcategories for each subcategory
+    foreach ($subCategories as $subCategory) {
+        $subSubCategories = $subCategory->subSubCategories;
+        // Do something with the sub-subcategories
+    }
+}
+
+//from sub-sub to category by subsub category id
+$subSubCategory = SubSubCategory::find($subSubCategoryId);
+
+if ($subSubCategory) {
+    $subCategory = $subSubCategory->subCategory;
+
+    if ($subCategory) {
+        $category = $subCategory->category;
+
+        if ($category) {
+            // Access the category
+            $categoryId = $category->id;
+            $categoryName = $category->name;
+
+            // Do something with the category
+        }
+    }
+}
+
+
+//user to category
+$user = User::find($userId);
+
+if ($user) {
+    $categories = $user->categories;
+    // Do something with the categories
+}
+
+$category = Category::find($categoryId);
+
+if ($category) {
+    $users = $category->users;
+    // Do something with the users
+}
+
+//in view
+<h2>{{ $category->name }}</h2>
+    <ul>
+        @foreach ($category->subCategories as $subCategory)
+            <li>{{ $subCategory->name }}</li>
+            <ul>
+                @foreach ($subCategory->subSubCategories as $subSubCategory)
+                    <li>{{ $subSubCategory->name }}</li>
+                @endforeach
+            </ul>
+        @endforeach
+    </ul>
